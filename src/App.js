@@ -18,7 +18,7 @@ const BASE_API_URL = "http://localhost:8080/api"
 
 function App() {
 
-  const [currentPayPeriod, setCurrentPayPeriod] = React.useState({currentPayPeriod: { pay: "0.00"}, budgetHealth: "$0.00"})
+  const [currentPayPeriod, setCurrentPayPeriod] = React.useState(null)
   const [newPayPeriod, setNewPayPeriod] = React.useState({pay: 0})
   
   const [ spendingTransactions, setSpendingTransactions ] = React.useState([])
@@ -29,29 +29,28 @@ function App() {
   const [ goals, setGoals ] = React.useState([])
   const [endingGoals, setEndingGoals] = React.useState([])
   
-  const [emrFund, setEmrFund] = React.useState({type: 3, numberOfPayPeriodPerMonth: 2, averagePayPerPeriod: "0.00", remainingBalance: "0.00", commitmentAmount: "0.00", goalAmount: "0.00" })
+  // const [emrFund, setEmrFund] = React.useState({type: 3, numberOfPayPeriodPerMonth: 2, averagePayPerPeriod: "0.00", remainingBalance: "0.00", commitmentAmount: "0.00", goalAmount: "0.00" })
  
-  React.useEffect( () => {
-    async function getData() {
-      const result = await axios(`${BASE_API_URL}/pay-period/current`)
-        setCurrentPayPeriod(result.data)
-    }
-    getData()
-  }, [])
+  // React.useEffect( () => {
+  //   async function getData() {
+  //     const result = await axios(`${BASE_API_URL}/pay-period/current`)
+  //       setCurrentPayPeriod(result.data)
+  //   }
+  //   getData()
+  // }, [])
+
+  // React.useEffect( () => {
+  //   async function getData() {
+  //     const result = await axios(`${BASE_API_URL}/emergency-fund`)
+  //     setEmrFund(result.data)
+  //   }
+  //   getData()
+  // }, [])
 
   React.useEffect( () => {
     async function getData() {
-      const result = await axios(`${BASE_API_URL}/emergency-fund`)
-      console.log(result)
-      setEmrFund(result.data)
-    }
-    getData()
-  }, [])
 
-  React.useEffect( () => {
-    async function getData() {
-
-      if(currentPayPeriod.currentPayPeriod._id) {
+      if(currentPayPeriod) {
         const result = await axios(`${BASE_API_URL}/spending-transaction/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
         setSpendingTransactions(result.data)
       }
@@ -63,7 +62,7 @@ function App() {
   React.useEffect( () => {
     async function getData() {
 
-      if(currentPayPeriod.currentPayPeriod._id) {
+      if(currentPayPeriod) {
         const result = await axios(`${BASE_API_URL}/goal/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
         setGoals(result.data)
       }
@@ -75,7 +74,7 @@ function App() {
   React.useEffect( () => {
     async function getData() {
 
-      if(currentPayPeriod.currentPayPeriod._id) {
+      if(currentPayPeriod) {
         const result = await axios(`${BASE_API_URL}/fixed-spending/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
         setfixedSpendings(result.data)
       }
@@ -84,7 +83,11 @@ function App() {
     getData()
   }, [currentPayPeriod])
 
-  const [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(emrFund, spendingTransactions, fixedSpendings, goals, currentPayPeriod.currentPayPeriod.pay, currentPayPeriod.budgetHealth)
+  let totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount
+
+  // if(currentPayPeriod) {
+  //   [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(emrFund, spendingTransactions, fixedSpendings, goals, currentPayPeriod.currentPayPeriod.pay, currentPayPeriod.budgetHealth)
+  // }
 
   return (
     <Router>
@@ -113,7 +116,8 @@ function App() {
             <Login />
           </Route>
           <Route path="/create_pay_period">
-              <CreatePayPeriodPage 
+              <h1>Create pay</h1>
+              {/* <CreatePayPeriodPage 
                 newPayPeriod={newPayPeriod}
                 setNewPayPeriod={setNewPayPeriod}
                 currentPayPeriod={currentPayPeriod}
@@ -126,11 +130,11 @@ function App() {
                 setGoals={setGoals}
                 endingGoals={endingGoals}
                 setEndingGoals={setEndingGoals}
-                totalBudgetAfterSpending={totalBudgetAfterSpending} />
+                totalBudgetAfterSpending={totalBudgetAfterSpending} /> */}
             </Route>
           <Route path="/">
             <Layout>
-              <Dashboard 
+              {/* <Dashboard 
                 currentPayPeriod={currentPayPeriod}
                 setCurrentPayPeriod={setCurrentPayPeriod}
                 spendingTransactions={spendingTransactions}
@@ -143,7 +147,7 @@ function App() {
                 setEmrFund={setEmrFund} 
                 totalBudgetBeforeTransactions={totalBudgetBeforeTransactions}
                 totalBudgetAfterSpending={totalBudgetAfterSpending}
-                totalTransactionAmount={totalTransactionAmount} />
+                totalTransactionAmount={totalTransactionAmount} /> */}
             </Layout>
           </Route>
         </Switch>
