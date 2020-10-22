@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
+import {client} from './utils/api-client'
 import {calculateBudget} from './services/calculateBudget'
-import Dashboard from './Dashboard'
-import CreatePayPeriodPage from './CreatePayPeriodForm'
-import Register from './Register'
-import Login from './Login'
+import * as Auth from './utils/auth'
+import AuthenticatedApp from './authenticatted-app'
+import UnAuthenticatedApp from './unAuthenticated-app'
 import Layout from './components/Layout'
 import {
   BrowserRouter as Router,
@@ -12,11 +12,14 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { SignalCellularNullRounded } from '@material-ui/icons'
 
 const BASE_API_URL = "http://localhost:8080/api"
 
 
 function App() {
+
+  const [userSettings, setUserSettings] = React.useState(null)
 
   const [currentPayPeriod, setCurrentPayPeriod] = React.useState(null)
   const [newPayPeriod, setNewPayPeriod] = React.useState({pay: 0})
@@ -28,6 +31,9 @@ function App() {
 
   const [ goals, setGoals ] = React.useState([])
   const [endingGoals, setEndingGoals] = React.useState([])
+
+  const [credentials, setCredentials] = React.useState({username: 'jrk-mel', password: '123'})
+
   
   // const [emrFund, setEmrFund] = React.useState({type: 3, numberOfPayPeriodPerMonth: 2, averagePayPerPeriod: "0.00", remainingBalance: "0.00", commitmentAmount: "0.00", goalAmount: "0.00" })
  
@@ -39,13 +45,12 @@ function App() {
   //   getData()
   // }, [])
 
-  // React.useEffect( () => {
-  //   async function getData() {
-  //     const result = await axios(`${BASE_API_URL}/emergency-fund`)
-  //     setEmrFund(result.data)
-  //   }
-  //   getData()
-  // }, [])
+  React.useEffect( () => {
+    client('/auth/get_user', {token: Auth.getToken()})
+      .then( data => {
+        return setUserSettings(data)
+      })
+  }, [])
 
   React.useEffect( () => {
     async function getData() {
@@ -85,75 +90,16 @@ function App() {
 
   let totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount
 
-  // if(currentPayPeriod) {
-  //   [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(emrFund, spendingTransactions, fixedSpendings, goals, currentPayPeriod.currentPayPeriod.pay, currentPayPeriod.budgetHealth)
-  // }
 
-  return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/register">Register</Link>
-            </li>
-            <li>
-              <Link to="/login">Login</Link>
-            </li>
-          </ul>
-        </nav>
+  const login = credentials => Auth.login(credentials).then( user => setUserSettings(user) )
+  const register = userSettings => Auth.register(userSettings).then( user => setUserSettings(user) )
+  const logout = () => Auth.logout().then( () => setUserSettings(null))
 
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-        <Switch>
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/create_pay_period">
-              <h1>Create pay</h1>
-              {/* <CreatePayPeriodPage 
-                newPayPeriod={newPayPeriod}
-                setNewPayPeriod={setNewPayPeriod}
-                currentPayPeriod={currentPayPeriod}
-                setCurrentPayPeriod={setCurrentPayPeriod}
-                fixedSpendings={fixedSpendings}
-                endingSpendings={endingSpendings}
-                setEndingSpendings={setEndingSpendings}
-                setfixedSpendings={setfixedSpendings} 
-                goals={goals}
-                setGoals={setGoals}
-                endingGoals={endingGoals}
-                setEndingGoals={setEndingGoals}
-                totalBudgetAfterSpending={totalBudgetAfterSpending} /> */}
-            </Route>
-          <Route path="/">
-            <Layout>
-              {/* <Dashboard 
-                currentPayPeriod={currentPayPeriod}
-                setCurrentPayPeriod={setCurrentPayPeriod}
-                spendingTransactions={spendingTransactions}
-                setSpendingTransactions={setSpendingTransactions}
-                fixedSpendings={fixedSpendings}
-                setfixedSpendings={setfixedSpendings} 
-                goals={goals}
-                setGoals={setGoals}
-                emrFund={emrFund}
-                setEmrFund={setEmrFund} 
-                totalBudgetBeforeTransactions={totalBudgetBeforeTransactions}
-                totalBudgetAfterSpending={totalBudgetAfterSpending}
-                totalTransactionAmount={totalTransactionAmount} /> */}
-            </Layout>
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  )
+  const props = { userSettings, login, register, logout }
+  return Auth.isAuthenticated() && userSettings
+    ? <AuthenticatedApp {...props} />
+    : <UnAuthenticatedApp {...props} />
+
 }
 
 export default App;

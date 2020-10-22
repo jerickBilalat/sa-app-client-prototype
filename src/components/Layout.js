@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Layout({children}) {
+export default function Layout({logout, children}) {
   const classes = useStyles()
 
   return (
@@ -28,7 +28,7 @@ export default function Layout({children}) {
             <Typography variant="h6" className={classes.title}>
               Spending Awareness
             </Typography>
-            <Button color="inherit">Logout</Button>
+            <Button onClick={() => logout()} color="inherit">Logout</Button>
           </Toolbar>
         </AppBar>
       </div>

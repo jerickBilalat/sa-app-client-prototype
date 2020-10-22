@@ -78,6 +78,7 @@ function handleUserResponse({user, token}) {
 }
 
 function login({username, password}) {
+  if(!username || !password) throw new Error('must provide username and password')
   return client('/auth/signin', {username, password}).then(handleUserResponse)
 }
 
@@ -113,4 +114,4 @@ async function client( endpoint, data) {
     )
 }
 
-export {getToken, login, register, logout, localStorageKey}
+export {getToken, isAuthenticated, login, register, logout, localStorageKey}

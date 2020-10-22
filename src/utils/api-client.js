@@ -1,5 +1,5 @@
 import axios from 'axios'
-import AuthUtils from '../utils/authUtils'
+import * as AuthUtils from './auth'
 
 const apiURL = process.env.REACT_APP_API_URL
 
