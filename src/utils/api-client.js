@@ -12,7 +12,7 @@ async function client(
         method: data ? 'POST' : 'GET',
         baseURL: apiURL,
         url: endpoint,
-        body: data ? JSON.stringify(data) : undefined,
+        data: data ? JSON.stringify(data) : undefined,
         headers: {
             'x-auth-token': token,
             'Content-Type': data ? 'application/json' : undefined,

@@ -5,6 +5,7 @@ export function calculateTotalAmount(collection) {
   return collection
     .map( x => x.amount )
     .reduce( (a,b) => currency(a).add(b), 0 )
+    .value
 }
 
 function getNumberValue(amount) {

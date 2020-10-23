@@ -1,6 +1,7 @@
 import React from 'react'
-import axios from 'axios'
 import currency from 'currency.js'
+import { client } from '../utils/api-client'
+import * as auth from '../utils/auth'
 
 function List({list, setList, payPeriod, POSTurl}) {
 
@@ -13,12 +14,17 @@ function List({list, setList, payPeriod, POSTurl}) {
 
   function onSubmit(e) {
     e.preventDefault()
-    axios.post(POSTurl, {description: listItem.description, amount: currency(listItem.amount).toString(), payPeriodId: payPeriod.currentPayPeriod._id})
-    .then( result => setList([...list, result.data]))
-    .catch( e => {throw new Error(e)})
-    .then(() => {
-      setListItem({...listItem, description: "", amount: 0})
+
+    client(POSTurl, { 
+      data: {description: listItem.description, amount: currency(listItem.amount).toString(), payPeriodId: payPeriod.payPeriod._id},
+      token: auth.getToken()
     })
+      .then( result => {
+        return setList([...list, result])})
+      .catch( e => {throw new Error(e)})
+      .then(() => {
+        setListItem({...listItem, description: "", amount: 0})
+      })
     
   }
 

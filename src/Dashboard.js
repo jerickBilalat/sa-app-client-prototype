@@ -30,13 +30,13 @@ function Dashboard({userSettings, totalTransactionAmount, totalBudgetBeforeTrans
           <h1>{totalTransactionAmount}/{totalBudgetBeforeTransactions}</h1>
           <p>Remaining Budget: {totalBudgetAfterSpending}</p>  
         
-          <List list={spendingTransactions} setList={setSpendingTransactions} payPeriod={currentPayPeriod} POSTurl={`${BASE_API_URL}/spending-transaction/create-spending-transaction`}/>
+          <List list={spendingTransactions} setList={setSpendingTransactions} payPeriod={currentPayPeriod} POSTurl={'/spending-transaction/create-spending-transaction'}/>
 
           <hr />
           
-          <List list={fixedSpendings} setList={setfixedSpendings} payPeriod={currentPayPeriod} POSTurl={`${BASE_API_URL}/fixed-spending/create-fixed-spending`} />
+          <List list={fixedSpendings} setList={setfixedSpendings} payPeriod={currentPayPeriod} POSTurl={'/fixed-spending/create-fixed-spending'} />
 
-          <List list={goals} setList={setGoals} payPeriod={currentPayPeriod} POSTurl={`${BASE_API_URL}/goal/create-goal`} />
+          <List list={goals} setList={setGoals} payPeriod={currentPayPeriod} POSTurl={'/goal/create-goal'} />
 
         </div>
         : <button>Create First Pay Period</button>
