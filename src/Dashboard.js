@@ -1,33 +1,15 @@
 import React from 'react'
 import List from './components/List'
-import currency from 'currency.js'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
-import AuthService from './services/auth'
+import {getEmrStats, format} from './services/calculateBudget'
 
 const BASE_API_URL = "http://localhost:8080/api"
 
 
-function Dashboard({totalTransactionAmount, totalBudgetBeforeTransactions, totalBudgetAfterSpending, emrFund, goals, setGoals, setfixedSpendings, fixedSpendings, setSpendingTransactions, currentPayPeriod, setCurrentPayPeriod, spendingTransactions}) {
-
-  const history = useHistory()
-
-// React.useEffect(() => {
-//   if(!AuthService.getUser()) return history.replace('/login')
-// })
-
- React.useEffect( () => {
-    
-    async function getData() {
-      const result = await axios(`${BASE_API_URL}/pay-period/current`)
-        setCurrentPayPeriod(result.data)
-    }
-    getData()
-  }, [setCurrentPayPeriod])
-
+function Dashboard({userSettings, totalTransactionAmount, totalBudgetBeforeTransactions, totalBudgetAfterSpending, goals, setGoals, setfixedSpendings, fixedSpendings, setSpendingTransactions, currentPayPeriod, setCurrentPayPeriod, spendingTransactions}) {
   
-  
+  const {emrGoalAmount, emrStatus} =getEmrStats(userSettings)
 
   return (
     <>
@@ -35,13 +17,13 @@ function Dashboard({totalTransactionAmount, totalBudgetBeforeTransactions, total
       ? <div>
           <button><Link to='create_pay_period'>Create Pay Period</Link></button>
           <p>Budget Health: {currentPayPeriod.budgetHealth}</p>
-          <p>Pay Period Id: {currentPayPeriod.currentPayPeriod._id && currentPayPeriod.currentPayPeriod._id }</p>
-          <p>Curent Pay Period Pay: {currentPayPeriod.currentPayPeriod.pay}</p>
+          <p>Pay Period Id: {currentPayPeriod.payPeriod._id && currentPayPeriod.payPeriod._id }</p>
+          <p>Curent Pay Period Pay: {format(currentPayPeriod.payPeriod.pay)}</p>
 
           <hr />
 
-          <p>Current Emergency Fund Status: {currency(emrFund.remainingBalance).value === currency(emrFund.goalAmount).value ? currency(emrFund.remainingBalance).format() : currency(emrFund.remainingBalance).add(emrFund.commitmentAmount).format()} / {emrFund.goalAmount}</p>
-          <p>Commitment per Pay Check: {currency(emrFund.commitmentAmount).format()}</p>
+          <p>Current Emergency Fund Status: {emrStatus} / {emrGoalAmount}</p>
+          <p>Commitment per Pay Check: {format(userSettings.emrCommitmentAmount)}</p>
 
           <hr />
 

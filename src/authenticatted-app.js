@@ -1,19 +1,16 @@
 import React from 'react'
-import axios from 'axios'
 import {calculateBudget} from './services/calculateBudget'
 import Dashboard from './Dashboard'
 import CreatePayPeriodPage from './CreatePayPeriodForm'
 import * as Auth from './utils/auth'
 import Layout from './components/Layout'
+import { client } from './utils/api-client'
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
 } from "react-router-dom";
-
-const BASE_API_URL = "http://localhost:8080/api"
-
 
 function AuthenticatedApp({userSettings, logout}) {
 
@@ -31,46 +28,63 @@ function AuthenticatedApp({userSettings, logout}) {
   const [credentials, setCredentials] = React.useState({username: 'jrk-mel', password: '123'})
 
   
-  // const [emrFund, setEmrFund] = React.useState({type: 3, numberOfPayPeriodPerMonth: 2, averagePayPerPeriod: "0.00", remainingBalance: "0.00", commitmentAmount: "0.00", goalAmount: "0.00" })
  
-  // React.useEffect( () => {
-  //   async function getData() {
-  //     const result = await axios(`${BASE_API_URL}/pay-period/current`)
-  //       setCurrentPayPeriod(result.data)
-  //   }
-  //   getData()
-  // }, [])
+  React.useEffect( () => {
+    client('/pay-period/current', {token: Auth.getToken()})
+      .then( data => {
+        setCurrentPayPeriod(data)
+      })
+  }, [])
 
   React.useEffect( () => {
-    async function getData() {
+    function getSpendingTransactions() {
 
       if(currentPayPeriod) {
-        const result = await axios(`${BASE_API_URL}/spending-transaction/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
-        setSpendingTransactions(result.data)
+        
+        const payPeriodID = currentPayPeriod.payPeriod._id
+
+        client(`/spending-transaction/by-pay-period?payPeriodId=${payPeriodID}`, {token: Auth.getToken()})
+        .then( data => {
+          setSpendingTransactions(data)
+        })
+
+      }
+      return
+    }
+    getSpendingTransactions()
+  }, [currentPayPeriod])
+
+  React.useEffect( () => {
+    function getData() {
+
+      if(currentPayPeriod) {
+        
+        const payPeriodID = currentPayPeriod.payPeriod._id
+
+        client(`/goal/by-pay-period?payPeriodId=${payPeriodID}`, {token: Auth.getToken()})
+        .then( data => {
+          setGoals(data)
+        })
+
       }
       return
     }
     getData()
+
   }, [currentPayPeriod])
 
   React.useEffect( () => {
-    async function getData() {
+    function getData() {
 
       if(currentPayPeriod) {
-        const result = await axios(`${BASE_API_URL}/goal/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
-        setGoals(result.data)
-      }
-      return
-    }
-    getData()
-  }, [currentPayPeriod])
+        
+        const payPeriodID = currentPayPeriod.payPeriod._id
 
-  React.useEffect( () => {
-    async function getData() {
+        client(`/fixed-spending/by-pay-period?payPeriodId=${payPeriodID}`, {token: Auth.getToken()})
+        .then( data => {
+          setfixedSpendings(data)
+        })
 
-      if(currentPayPeriod) {
-        const result = await axios(`${BASE_API_URL}/fixed-spending/by-pay-period?payPeriodId=${currentPayPeriod.currentPayPeriod._id}`)
-        setfixedSpendings(result.data)
       }
       return
     }
@@ -79,9 +93,9 @@ function AuthenticatedApp({userSettings, logout}) {
 
   let totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount
 
-  // if(currentPayPeriod) {
-  //   [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(emrFund, spendingTransactions, fixedSpendings, goals, currentPayPeriod.currentPayPeriod.pay, currentPayPeriod.budgetHealth)
-  // }
+  if(currentPayPeriod) {
+    [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(userSettings, spendingTransactions, fixedSpendings, goals, currentPayPeriod.payPeriod.pay, currentPayPeriod.budgetHealth)
+  }
 
   return (
     <Router>
@@ -122,7 +136,7 @@ function AuthenticatedApp({userSettings, logout}) {
           <Route path="/">
             <Layout logout={logout}>
                 <h1>Dashboard</h1>
-              {/* <Dashboard 
+              <Dashboard 
                 currentPayPeriod={currentPayPeriod}
                 setCurrentPayPeriod={setCurrentPayPeriod}
                 spendingTransactions={spendingTransactions}
@@ -131,11 +145,10 @@ function AuthenticatedApp({userSettings, logout}) {
                 setfixedSpendings={setfixedSpendings} 
                 goals={goals}
                 setGoals={setGoals}
-                emrFund={emrFund}
-                setEmrFund={setEmrFund} 
+                userSettings={userSettings}
                 totalBudgetBeforeTransactions={totalBudgetBeforeTransactions}
                 totalBudgetAfterSpending={totalBudgetAfterSpending}
-                totalTransactionAmount={totalTransactionAmount} /> */}
+                totalTransactionAmount={totalTransactionAmount} />
             </Layout>
           </Route>
         </Switch>
