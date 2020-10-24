@@ -1,15 +1,12 @@
 import React from 'react'
 import List from './components/List'
 import {Link} from 'react-router-dom'
-import axios from 'axios'
 import {getEmrStats, format} from './services/calculateBudget'
-
-const BASE_API_URL = "http://localhost:8080/api"
 
 
 function Dashboard({userSettings, totalTransactionAmount, totalBudgetBeforeTransactions, totalBudgetAfterSpending, goals, setGoals, setfixedSpendings, fixedSpendings, setSpendingTransactions, currentPayPeriod, setCurrentPayPeriod, spendingTransactions}) {
   
-  const {emrGoalAmount, emrStatus} =getEmrStats(userSettings)
+  const {emrGoalAmount, emrStatus} = getEmrStats(userSettings)
 
   return (
     <>

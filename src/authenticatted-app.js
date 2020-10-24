@@ -12,7 +12,7 @@ import {
   Link
 } from "react-router-dom";
 
-function AuthenticatedApp({userSettings, logout}) {
+function AuthenticatedApp({userSettings, logout, setUserSettings}) {
 
   const [currentPayPeriod, setCurrentPayPeriod] = React.useState(null)
   const [newPayPeriod, setNewPayPeriod] = React.useState({pay: 0})
@@ -24,9 +24,6 @@ function AuthenticatedApp({userSettings, logout}) {
 
   const [ goals, setGoals ] = React.useState([])
   const [endingGoals, setEndingGoals] = React.useState([])
-
-  const [credentials, setCredentials] = React.useState({username: 'jrk-mel', password: '123'})
-
   
  
   React.useEffect( () => {
@@ -117,7 +114,8 @@ function AuthenticatedApp({userSettings, logout}) {
           <Route path="/create_pay_period">
             <Layout logout={logout}>
               <h1>Create pay</h1>
-                {/* <CreatePayPeriodPage 
+                <CreatePayPeriodPage 
+                  setUserSettings={setUserSettings}
                   newPayPeriod={newPayPeriod}
                   setNewPayPeriod={setNewPayPeriod}
                   currentPayPeriod={currentPayPeriod}
@@ -130,7 +128,7 @@ function AuthenticatedApp({userSettings, logout}) {
                   setGoals={setGoals}
                   endingGoals={endingGoals}
                   setEndingGoals={setEndingGoals}
-                  totalBudgetAfterSpending={totalBudgetAfterSpending} /> */}
+                  totalBudgetAfterSpending={totalBudgetAfterSpending} />
             </Layout>
             </Route>
           <Route path="/">

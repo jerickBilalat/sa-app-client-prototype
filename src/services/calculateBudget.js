@@ -13,14 +13,14 @@ function getNumberValue(amount) {
 }
 
 function isEmrGoalReached(emrSettings) {
-  return getNumberValue(emrSettings.emrRemainingBalance) <= getNumberValue(calculateEmrGoalAmount(emrSettings))
+  return getNumberValue(emrSettings.emrRemainingBalance) >= getNumberValue(calculateEmrGoalAmount(emrSettings))
 }
 
 export function calculateEmrStatus(userSettings) {
   const goalAmount = calculateEmrGoalAmount(userSettings)
-  return getNumberValue(userSettings.remainingBalance) <= getNumberValue(goalAmount)
-  ? currency(userSettings.remainingBalance)
-  : currency(userSettings.remainingBalance).add(userSettings.emrCommitmentAmount)
+  return getNumberValue(userSettings.emrRemainingBalance) <= getNumberValue(goalAmount)
+  ? currency(userSettings.emrRemainingBalance)
+  : currency(userSettings.emrRemainingBalance).add(userSettings.emrCommitmentAmount)
 }
 
 export function calculateEmrGoalAmount({averagePayPerPeriod, numberOfPayPeriodPerMonth, emrtype}) {
@@ -34,8 +34,8 @@ export function calculateBudget(emrSettings, spendingTransactions = [], fixedSpe
     .subtract(calculateTotalAmount(goals))
     .format()
 
-  if(isEmrGoalReached(emrSettings)) {
-    totalBudgetBeforeTransactions = currency(totalBudgetBeforeTransactions).subtract(emrSettings.commitmentAmount).format()
+  if(!isEmrGoalReached(emrSettings)) {
+    totalBudgetBeforeTransactions = currency(totalBudgetBeforeTransactions).subtract(emrSettings.emrCommitmentAmount).format()
   }
 
   const totalTransactionAmount = currency(calculateTotalAmount(spendingTransactions)).format()

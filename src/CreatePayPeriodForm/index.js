@@ -3,13 +3,12 @@ import CreatePayPeriod from './CreatePayPeriod'
 import AddFixedSpendings from './AddFixedSpendings'
 import AddGoals from './AddGoals'
 import Confirm from './Confirm'
-import axios from 'axios'
+import {client} from '../utils/api-client'
+import * as auth from '../utils/auth'
 import currency from 'currency.js'
 import {useHistory, Route, Switch, useRouteMatch} from 'react-router-dom'
 
-const BASE_API_URL = "http://localhost:8080/api"
-
-function CreatePayPeriodPage({setRoute, totalBudgetAfterSpending, goals, setGoals, endingGoals, setEndingGoals, newPayPeriod, setNewPayPeriod, currentPayPeriod, setCurrentPayPeriod, fixedSpendings, setFixedSpendings, endingSpendings, setEndingSpendings}) {
+function CreatePayPeriodPage({setRoute, setUserSettings, totalBudgetAfterSpending, goals, setGoals, endingGoals, setEndingGoals, newPayPeriod, setNewPayPeriod, currentPayPeriod, setCurrentPayPeriod, fixedSpendings, setFixedSpendings, endingSpendings, setEndingSpendings}) {
 
   let match = useRouteMatch()
   let history = useHistory()
@@ -23,11 +22,11 @@ function CreatePayPeriodPage({setRoute, totalBudgetAfterSpending, goals, setGoal
 
   function onSubmit(e) {
     e.preventDefault()
-    axios.post(
-      `${BASE_API_URL}/pay-period/create-pay-period`, 
-      {
+
+    client('/pay-period/create-pay-period',
+      { data: {
         pay: currency(newPayPeriod.pay),
-        prevPayPeriodID: currentPayPeriod.currentPayPeriod._id,
+        prevPayPeriodID: currentPayPeriod.payPeriod._id,
         remainingBudget: totalBudgetAfterSpending,
         continuedFixedSpendings: fixedSpendings
           .filter( x => !endingSpendings.includes(x._id))
@@ -35,9 +34,15 @@ function CreatePayPeriodPage({setRoute, totalBudgetAfterSpending, goals, setGoal
         continuedGoals: goals
           .filter( x => !endingGoals.includes(x._id))
           .map( x => x._id)
-      })
-    .then( res =>  {
-      if(res.data.status === "ok") return history.replace('/')
+        },
+        token: auth.getToken()
+      }
+    )
+    .then( res  =>  {
+      if(res.status === 'ok') {
+        window.location.assign(window.location.origin)
+      }
+      return
     })
     .catch( e => console.error(e))
   }

@@ -1,7 +1,7 @@
 import React from 'react'
 export default ({login, register}) => {
 
-  const [credentials, setCredentials] = React.useState({username: 'jrk-mel', password: '123'})
+  const [credentials, setCredentials] = React.useState({username: 'mel-jrk', password: 'jrkmel123'})
 
   function onChange(e) {
     const value = e.target.value
