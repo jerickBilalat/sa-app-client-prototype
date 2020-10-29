@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Layout({logout, children}) {
+export default function Layout({logout, userSettings, children}) {
   const classes = useStyles()
 
   return (
@@ -26,7 +26,7 @@ export default function Layout({logout, children}) {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
-              Spending Awareness
+              Spending Awareness - {userSettings ? userSettings.username : null}
             </Typography>
             <Button onClick={() => logout()} color="inherit">Logout</Button>
           </Toolbar>

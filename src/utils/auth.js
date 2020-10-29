@@ -82,8 +82,8 @@ function login({username, password}) {
   return client('/auth/signin', {username, password}).then(handleUserResponse)
 }
 
-function register({username, password}) {
-  return client('/auth/register', {username, password}).then(handleUserResponse)
+function register(userSettings) {
+  return client('/auth/register', {...userSettings}).then(handleUserResponse)
 }
 
 async function logout() {

@@ -11,7 +11,6 @@ import {useHistory, Route, Switch, useRouteMatch} from 'react-router-dom'
 function CreatePayPeriodPage({setRoute, setUserSettings, totalBudgetAfterSpending, goals, setGoals, endingGoals, setEndingGoals, newPayPeriod, setNewPayPeriod, currentPayPeriod, setCurrentPayPeriod, fixedSpendings, setFixedSpendings, endingSpendings, setEndingSpendings}) {
 
   let match = useRouteMatch()
-  let history = useHistory()
 
   const [ formStep, setFormStep ] = React.useState(1)
 
@@ -26,7 +25,7 @@ function CreatePayPeriodPage({setRoute, setUserSettings, totalBudgetAfterSpendin
     client('/pay-period/create-pay-period',
       { data: {
         pay: currency(newPayPeriod.pay),
-        prevPayPeriodID: currentPayPeriod.payPeriod._id,
+        prevPayPeriodID: currentPayPeriod && currentPayPeriod.payPeriod._id ? currentPayPeriod.payPeriod._id : null,
         remainingBudget: totalBudgetAfterSpending,
         continuedFixedSpendings: fixedSpendings
           .filter( x => !endingSpendings.includes(x._id))

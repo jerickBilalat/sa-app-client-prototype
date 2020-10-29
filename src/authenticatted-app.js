@@ -29,6 +29,7 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
   React.useEffect( () => {
     client('/pay-period/current', {token: Auth.getToken()})
       .then( data => {
+        if(!data.payPeriod) return
         setCurrentPayPeriod(data)
       })
   }, [])
@@ -90,7 +91,7 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
 
   let totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount
 
-  if(currentPayPeriod) {
+  if(currentPayPeriod && currentPayPeriod.payPeriod) {
     [totalBudgetBeforeTransactions, totalBudgetAfterSpending, totalTransactionAmount] = calculateBudget(userSettings, spendingTransactions, fixedSpendings, goals, currentPayPeriod.payPeriod.pay, currentPayPeriod.budgetHealth)
   }
 
@@ -112,7 +113,7 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
             renders the first one that matches the current URL. */}
         <Switch>
           <Route path="/create_pay_period">
-            <Layout logout={logout}>
+            <Layout logout={logout} userSettings={userSettings}>
               <h1>Create pay</h1>
                 <CreatePayPeriodPage 
                   setUserSettings={setUserSettings}
@@ -132,7 +133,7 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
             </Layout>
             </Route>
           <Route path="/">
-            <Layout logout={logout}>
+            <Layout logout={logout} userSettings={userSettings}>
                 <h1>Dashboard</h1>
               <Dashboard 
                 currentPayPeriod={currentPayPeriod}

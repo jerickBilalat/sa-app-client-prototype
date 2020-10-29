@@ -7,6 +7,14 @@ export function calculateTotalAmount(collection) {
     .reduce( (a,b) => currency(a).add(b), 0 )
     .value
 }
+export function calculateTotalAmountWithPeriodOccurance(collection, payPeriodOccurance) {
+  if (collection.length === 0) return 0
+  return collection
+    .map( x => x.amount )
+    .reduce( (a,b) => currency(a).add(b), 0 )
+    .divide(payPeriodOccurance)
+    .value
+}
 
 function getNumberValue(amount) {
   return currency(amount).value
@@ -19,8 +27,8 @@ function isEmrGoalReached(emrSettings) {
 export function calculateEmrStatus(userSettings) {
   const goalAmount = calculateEmrGoalAmount(userSettings)
   return getNumberValue(userSettings.emrRemainingBalance) <= getNumberValue(goalAmount)
-  ? currency(userSettings.emrRemainingBalance)
-  : currency(userSettings.emrRemainingBalance).add(userSettings.emrCommitmentAmount)
+  ? currency(userSettings.emrRemainingBalance).add(userSettings.emrCommitmentAmount)
+  : currency(userSettings.emrRemainingBalance)
 }
 
 export function calculateEmrGoalAmount({averagePayPerPeriod, numberOfPayPeriodPerMonth, emrtype}) {
@@ -30,8 +38,8 @@ export function calculateBudget(emrSettings, spendingTransactions = [], fixedSpe
 
 
   let totalBudgetBeforeTransactions = currency(pay)
-    .subtract(calculateTotalAmount(fixedSpendings))
-    .subtract(calculateTotalAmount(goals))
+    .subtract(calculateTotalAmountWithPeriodOccurance(fixedSpendings, emrSettings.numberOfPayPeriodPerMonth))
+    .subtract(calculateTotalAmountWithPeriodOccurance(goals, emrSettings.numberOfPayPeriodPerMonth))
     .format()
 
   if(!isEmrGoalReached(emrSettings)) {

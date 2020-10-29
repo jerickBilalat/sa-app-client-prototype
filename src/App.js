@@ -7,7 +7,7 @@ import UnAuthenticatedApp from './unAuthenticated-app'
 function App() {
 
   const [userSettings, setUserSettings] = React.useState(null)
-console.log('app renders')
+
   React.useEffect( () => {
     client('/auth/get_user', {token: Auth.getToken()})
       .then( data => {
@@ -15,7 +15,7 @@ console.log('app renders')
       })
   }, [])
 
-  const login = credentials => Auth.login(credentials).then( user => setUserSettings(user) )
+  const login = credentials => Auth.login(credentials).then( user => {console.log('hitttttt');return setUserSettings(user)} )
   const register = userSettings => Auth.register(userSettings).then( user => setUserSettings(user) )
   const logout = () => Auth.logout().then( () => setUserSettings(null))
 
