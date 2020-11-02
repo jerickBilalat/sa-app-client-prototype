@@ -25,10 +25,14 @@ function isEmrGoalReached(emrSettings) {
 }
 
 export function calculateEmrStatus(userSettings) {
-  const goalAmount = calculateEmrGoalAmount(userSettings)
-  return getNumberValue(userSettings.emrRemainingBalance) <= getNumberValue(goalAmount)
-  ? currency(userSettings.emrRemainingBalance).add(userSettings.emrCommitmentAmount)
-  : currency(userSettings.emrRemainingBalance)
+  console.log('hit')
+  const goalAmount = getNumberValue(calculateEmrGoalAmount(userSettings))
+  const balance = getNumberValue(userSettings.emrRemainingBalance)
+  console.log('balance', balance)
+  console.log('goalAmount: ', goalAmount)
+  return balance >= goalAmount
+  ? currency(balance)
+  : currency(balance).add(userSettings.emrCommitmentAmount)
 }
 
 export function calculateEmrGoalAmount({averagePayPerPeriod, numberOfPayPeriodPerMonth, emrtype}) {
