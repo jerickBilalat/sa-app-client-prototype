@@ -25,11 +25,8 @@ function isEmrGoalReached(emrSettings) {
 }
 
 export function calculateEmrStatus(userSettings) {
-  console.log('hit')
   const goalAmount = getNumberValue(calculateEmrGoalAmount(userSettings))
   const balance = getNumberValue(userSettings.emrRemainingBalance)
-  console.log('balance', balance)
-  console.log('goalAmount: ', goalAmount)
   return balance >= goalAmount
   ? currency(balance)
   : currency(balance).add(userSettings.emrCommitmentAmount)

@@ -20,7 +20,6 @@ export default () => {
 
     Auth.login(credentials)
     .then( res => {
-        console.log(res)
         history.push('/')
     })
     .catch( err => {throw new Error(err)} )

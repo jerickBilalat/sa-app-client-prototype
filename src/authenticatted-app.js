@@ -19,6 +19,8 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
   
   const [ spendingTransactions, setSpendingTransactions ] = React.useState([])
 
+  const [ freeSpendingTransactions, setFreeSpendingTransactions ] = React.useState([])
+
   const [ fixedSpendings, setfixedSpendings ] = React.useState([])
   const [endingSpendings, setEndingSpendings] = React.useState([])
 
@@ -41,9 +43,27 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
         
         const payPeriodID = currentPayPeriod.payPeriod._id
 
-        client(`/spending-transaction/by-pay-period?payPeriodId=${payPeriodID}`, {token: Auth.getToken()})
+        client(`/spending-transaction/by-pay-period?payPeriodId=${payPeriodID}&cat=normal`, {token: Auth.getToken()})
         .then( data => {
           setSpendingTransactions(data)
+        })
+
+      }
+      return
+    }
+    getSpendingTransactions()
+  }, [currentPayPeriod])
+
+  React.useEffect( () => {
+    function getSpendingTransactions() {
+
+      if(currentPayPeriod) {
+        
+        const payPeriodID = currentPayPeriod.payPeriod._id
+
+        client(`/spending-transaction/by-pay-period?payPeriodId=${payPeriodID}&cat=free`, {token: Auth.getToken()})
+        .then( data => {
+          setFreeSpendingTransactions(data)
         })
 
       }
@@ -140,8 +160,10 @@ function AuthenticatedApp({userSettings, logout, setUserSettings}) {
                 setCurrentPayPeriod={setCurrentPayPeriod}
                 spendingTransactions={spendingTransactions}
                 setSpendingTransactions={setSpendingTransactions}
+                freeSpendingTransactions={freeSpendingTransactions}
+                setFreeSpendingTransactions={setFreeSpendingTransactions}
                 fixedSpendings={fixedSpendings}
-                setfixedSpendings={setfixedSpendings} 
+                setfixedSpendings={setfixedSpendings}
                 goals={goals}
                 setGoals={setGoals}
                 userSettings={userSettings}

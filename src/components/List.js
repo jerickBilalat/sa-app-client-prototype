@@ -16,7 +16,7 @@ function List({list, setList, payPeriod, POSTurl}) {
     e.preventDefault()
 
     client(POSTurl, { 
-      data: {description: listItem.description, amount: currency(listItem.amount).toString(), payPeriodId: payPeriod.payPeriod._id},
+      data: {description: listItem.description, category: POSTurl === '/spending-transaction/create-spending-transaction' ? 'normal' : null, amount: currency(listItem.amount).toString(), payPeriodId: payPeriod.payPeriod._id},
       token: auth.getToken()
     })
       .then( result => {

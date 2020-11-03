@@ -1,18 +1,18 @@
 import React from 'react'
 import List from './components/List'
 import {Link} from 'react-router-dom'
-import {getEmrStats, format} from './services/calculateBudget'
+import {getEmrStats, format, calculateTotalAmount} from './services/calculateBudget'
+import currency from 'currency.js'
 
 
-function Dashboard({userSettings, totalTransactionAmount, totalBudgetBeforeTransactions, totalBudgetAfterSpending, goals, setGoals, setfixedSpendings, fixedSpendings, setSpendingTransactions, currentPayPeriod, setCurrentPayPeriod, spendingTransactions}) {
+function Dashboard({userSettings, totalTransactionAmount, totalBudgetBeforeTransactions, totalBudgetAfterSpending, goals, setGoals, setfixedSpendings, fixedSpendings, setSpendingTransactions, currentPayPeriod, setCurrentPayPeriod, spendingTransactions, freeSpendingTransactions, setFreeSpendingTransactions}) {
   
   if(!currentPayPeriod) return <Link to="/create_pay_period" >Create First Pay Period</Link>
-
   const {emrGoalAmount, emrStatus} = getEmrStats(userSettings, spendingTransactions, fixedSpendings, goals, currentPayPeriod.payPeriod.pay, currentPayPeriod.budgetHealth)
 
   return (
     <> <div>
-          <p>Budget Health: {currentPayPeriod.budgetHealth}</p>
+          <p>Budget Health: {currency(currentPayPeriod.budgetHealth).subtract(calculateTotalAmount(freeSpendingTransactions)).format()}</p>
           <p>Pay Period Id: {currentPayPeriod.payPeriod._id && currentPayPeriod.payPeriod._id }</p>
           <p>Curent Pay Period Pay: {format(currentPayPeriod.payPeriod.pay)}</p>
 
