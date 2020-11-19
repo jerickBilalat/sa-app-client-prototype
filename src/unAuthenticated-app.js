@@ -2,7 +2,7 @@ import React from 'react'
 import currency from 'currency.js'
 export default ({login, register}) => {
 
-  const [newUser, setNewUser] = React.useState({username: '', password: '', confirmPassword:'', emrtype: 3, emrRemainingBalance: 0, emrCommitmentAmount: 0, averagePayPerPeriod: 0, numberOfPayPeriodPerMonth: 2})
+  const [newUser, setNewUser] = React.useState({username: 'jrk-mel', password: 'jerixm26', confirmPassword:'jerixm26', emrtype: 3, emrRemainingBalance: 0, emrCommitmentAmount: "100", averagePayPerPeriod: "1600", numberOfPayPeriodPerMonth: 2})
   const [isNewUser, setIsNewUser] = React.useState(false)
   const [credentials, setCredentials] = React.useState({username: '', password: ''})
   const [registerFormErrors, setRegisterFormErrors] = React.useState({})
